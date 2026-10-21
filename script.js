@@ -122,5 +122,4 @@ function cleanName(name) {
 // Remove extra spaces and make emails lowercase.
 function cleanEmail(email) {
     return email.trim().toLowerCase();
-} 
-
+}
