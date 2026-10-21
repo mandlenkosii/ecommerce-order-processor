@@ -134,3 +134,42 @@ function formatMoney(amount) {
         maximumFractionDigits: 2
     });
 }
+
+// Calculate the total value of all orders.
+function calculateTotal() {
+    return orders.reduce((total, order) => {
+        return total + Number(order.price);
+    }, 0);
+}
+
+// Calculate the average order price.
+function calculateAverage() {
+    if (orders.length === 0) {
+        return 0;
+    }
+
+    return calculateTotal() / orders.length;
+}
+
+// Find the highest-priced order.
+function getHighestPrice() {
+    if (orders.length === 0) {
+        return 0;
+    }
+
+    return Math.max(...orders.map(order => Number(order.price)));
+}
+
+// Find the lowest-priced order.
+function getLowestPrice() {
+    if (orders.length === 0) {
+        return 0;
+    }
+
+    return Math.min(...orders.map(order => Number(order.price)));
+}
+
+// Calculate 15% VAT for an order.
+function calculateVAT(price) {
+    return Number(price) * 0.15;
+}
