@@ -225,3 +225,105 @@ function daysSince(dateString) {
         (today.getTime() - orderDate.getTime()) / (1000 * 60 * 60 * 24)
     );
 }
+
+// CHALLENGE 4: SEARCH, FILTER AND ANALYSE ORDERS
+// Built-in concept: Array methods
+
+// Find an order by its ID or customer name.
+function findOrder(searchText) {
+    const search = searchText.trim().toLowerCase();
+
+    return orders.find(order =>
+        order.orderId.toLowerCase().includes(search) ||
+        cleanName(order.customerName).toLowerCase().includes(search)
+    );
+}
+
+// Filter orders by category and price range.
+function filterOrders() {
+    const search = document.getElementById("searchInput")
+        .value.trim().toLowerCase();
+
+    const category = document.getElementById("categoryFilter").value;
+
+    const minValue = document.getElementById("minPrice").value;
+    const maxValue = document.getElementById("maxPrice").value;
+
+    const minPrice = minValue === "" ? 0 : Number(minValue);
+    const maxPrice = maxValue === "" ? Infinity : Number(maxValue);
+
+    // filter() keeps only orders that match all selected conditions.
+    displayedOrders = orders.filter(order => {
+        const matchesSearch =
+            order.orderId.toLowerCase().includes(search) ||
+            cleanName(order.customerName).toLowerCase().includes(search) ||
+            order.product.toLowerCase().includes(search);
+
+        const matchesCategory =
+            category === "" || order.category === category;
+
+        const matchesMinPrice = Number(order.price) >= minPrice;
+        const matchesMaxPrice = Number(order.price) <= maxPrice;
+
+        return matchesSearch &&
+            matchesCategory &&
+            matchesMinPrice &&
+            matchesMaxPrice;
+    });
+
+    // some() checks if at least one order costs more than R1,000.
+    const hasExpensiveOrder = displayedOrders.some(order =>
+        Number(order.price) > 1000
+    );
+
+    // every() checks whether every displayed order has a valid price.
+    const allPricesValid = displayedOrders.every(order =>
+        Number.isFinite(Number(order.price)) && Number(order.price) >= 0
+    );
+
+    // map() creates a list of product names and prices including VAT.
+    const pricesWithVAT = displayedOrders.map(order => {
+        return order.product + ": " +
+            formatMoney(Number(order.price) + calculateVAT(order.price));
+    });
+
+    // reduce() calculates the total for the filtered orders.
+    const filteredTotal = displayedOrders.reduce((total, order) => {
+        return total + Number(order.price);
+    }, 0);
+
+    document.getElementById("analysisMessage").textContent =
+        "Filtered total: " + formatMoney(filteredTotal) +
+        " | Any order over R1,000: " + (hasExpensiveOrder ? "Yes" : "No") +
+        " | All prices valid: " + (allPricesValid ? "Yes" : "No") +
+        " | Orders shown: " + displayedOrders.length;
+
+    renderOrders();
+
+    // The VAT list is also available in the browser console for testing.
+    console.log("Filtered products with VAT:", pricesWithVAT);
+}
+
+// Show all orders again.
+function resetFilters() {
+    document.getElementById("searchInput").value = "";
+    document.getElementById("categoryFilter").value = "";
+    document.getElementById("minPrice").value = "";
+    document.getElementById("maxPrice").value = "";
+
+    displayedOrders = [...orders];
+
+    document.getElementById("analysisMessage").textContent =
+        "Showing all orders.";
+
+    renderOrders();
+}
+
+// Sort the orders from newest to oldest.
+function sortNewestFirst() {
+    displayedOrders.sort((a, b) => {
+        return new Date(b.orderDate) - new Date(a.orderDate);
+    });
+
+    renderOrders();
+}
