@@ -370,3 +370,53 @@ function renderCategories() {
         categoryFilter.value = previousSelection;
     }
 }
+
+// CHALLENGE 6: PRODUCT LOOKUP
+// Built-in concept: Map
+
+// Create a Map where the product name is the key.
+function getProductMap() {
+    const productMap = new Map();
+
+    orders.forEach(order => {
+        productMap.set(order.product.toLowerCase(), {
+            product: order.product,
+            price: Number(order.price),
+            category: order.category
+        });
+    });
+
+    return productMap;
+}
+
+// Search for a product and show its details.
+function lookupProduct() {
+    const productName = document.getElementById("productInput")
+        .value.trim().toLowerCase();
+
+    const productMap = getProductMap();
+    const result = document.getElementById("productResult");
+
+    if (productName === "") {
+        result.textContent = "Please enter a product name.";
+        result.className = "mt-4 text-orange-700";
+        return;
+    }
+
+    // has() checks if the product exists before get() retrieves it.
+    if (productMap.has(productName)) {
+        const product = productMap.get(productName);
+
+        result.textContent =
+            "Product: " + product.product +
+            " | Category: " + product.category +
+            " | Price: " + formatMoney(product.price);
+
+        result.className = "mt-4 text-green-700 font-semibold";
+    } else {
+        result.textContent = "Product not found. Please try another name.";
+        result.className = "mt-4 text-red-700";
+    }
+
+    console.log("Number of products in the Map:", productMap.size);
+}
