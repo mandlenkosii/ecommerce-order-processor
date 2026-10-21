@@ -173,3 +173,55 @@ function getLowestPrice() {
 function calculateVAT(price) {
     return Number(price) * 0.15;
 }
+
+// CHALLENGE 3: WORK WITH ORDER DATES
+// Built-in concept: Date
+
+// Convert a raw date into a readable date.
+function formatDate(dateString) {
+    const date = new Date(dateString + "T00:00:00");
+
+    if (Number.isNaN(date.getTime())) {
+        return "Invalid date";
+    }
+
+    return date.toLocaleDateString("en-ZA", {
+        day: "numeric",
+        month: "long",
+        year: "numeric"
+    });
+}
+
+// Check whether an order was placed in the last 30 days.
+function isRecent(dateString) {
+    const orderDate = new Date(dateString + "T00:00:00");
+    const today = new Date();
+
+    if (Number.isNaN(orderDate.getTime())) {
+        return false;
+    }
+
+    // Remove the time so the comparison is based on calendar days.
+    today.setHours(0, 0, 0, 0);
+
+    const daysAgo = (today.getTime() - orderDate.getTime())
+        / (1000 * 60 * 60 * 24);
+
+    return daysAgo >= 0 && daysAgo <= 30;
+}
+
+// Calculate how many days have passed since an order.
+function daysSince(dateString) {
+    const orderDate = new Date(dateString + "T00:00:00");
+    const today = new Date();
+
+    if (Number.isNaN(orderDate.getTime())) {
+        return null;
+    }
+
+    today.setHours(0, 0, 0, 0);
+
+    return Math.floor(
+        (today.getTime() - orderDate.getTime()) / (1000 * 60 * 60 * 24)
+    );
+}
