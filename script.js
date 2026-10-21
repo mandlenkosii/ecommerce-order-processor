@@ -327,3 +327,46 @@ function sortNewestFirst() {
 
     renderOrders();
 }
+
+// CHALLENGE 5: UNIQUE CATEGORIES
+// Built-in concept: Set
+
+// Set automatically removes duplicate category names.
+function getUniqueCategories() {
+    return new Set(orders.map(order => order.category));
+}
+
+// Display categories and populate the category dropdown.
+function renderCategories() {
+    const categories = getUniqueCategories();
+    const categoriesList = document.getElementById("categoriesList");
+    const categoryFilter = document.getElementById("categoryFilter");
+
+    categoriesList.innerHTML = "";
+
+    categories.forEach(category => {
+        const tag = document.createElement("span");
+
+        tag.className = "bg-blue-100 text-blue-800 px-3 py-2 rounded";
+        tag.textContent = category;
+
+        categoriesList.appendChild(tag);
+    });
+
+    // Preserve the current selection if the category still exists.
+    const previousSelection = categoryFilter.value;
+
+    categoryFilter.innerHTML = '<option value="">All categories</option>';
+
+    categories.forEach(category => {
+        const option = document.createElement("option");
+        option.value = category;
+        option.textContent = category;
+
+        categoryFilter.appendChild(option);
+    });
+
+    if (categories.has(previousSelection)) {
+        categoryFilter.value = previousSelection;
+    }
+}
