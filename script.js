@@ -102,3 +102,24 @@ let orders = [
 // This array stores the orders currently displayed.
 // Initially, all orders are displayed.
 let displayedOrders = [...orders];
+
+
+//
+// CHALLENGE 1: CLEAN CUSTOMER DATA
+// Built-in concept: String
+
+
+// Remove extra spaces and capitalise each word in a name.
+function cleanName(name) {
+    return name
+        .trim()
+        .toLowerCase()
+        .split(/\s+/)
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(" ");
+}
+
+// Remove extra spaces and make emails lowercase.
+function cleanEmail(email) {
+    return email.trim().toLowerCase();
+}
