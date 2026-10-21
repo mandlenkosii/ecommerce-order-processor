@@ -123,3 +123,14 @@ function cleanName(name) {
 function cleanEmail(email) {
     return email.trim().toLowerCase();
 }
+
+// CHALLENGE 2: CALCULATE PRICES
+// Built-in concepts: Number and Math
+
+// Format prices as South African rand.
+function formatMoney(amount) {
+    return "R" + Number(amount).toLocaleString("en-ZA", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    });
+}
