@@ -1,0 +1,177 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Commerce Order Processor</title>
+
+    <!-- Tailwind CSS is used for all styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100 text-gray-800">
+    <header class="bg-blue-900 text-white p-6">
+        <div class="max-w-7xl mx-auto">
+            <h1 class="text-3xl font-bold">E-Commerce Order Processor</h1>
+            <p class="mt-2">Manage, search and analyse customer orders.</p>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto p-4 space-y-6">
+
+        <!-- STATISTICS SECTION: Challenges 2 and 9 -->
+        <section class="bg-white p-5 rounded-lg shadow">
+            <h2 class="text-2xl font-bold mb-4">Statistics Dashboard</h2>
+            <div id="statistics" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+        </section>
+
+        <!-- SEARCH AND FILTER SECTION: Challenge 4 -->
+        <section class="bg-white p-5 rounded-lg shadow">
+            <h2 class="text-2xl font-bold mb-4">Search / Filter Orders</h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+                <input id="searchInput" class="border rounded p-2"
+                    placeholder="Search order ID or customer">
+
+                <select id="categoryFilter" class="border rounded p-2">
+                    <option value="">All categories</option>
+                </select>
+
+                <input id="minPrice" type="number" min="0"
+                    class="border rounded p-2" placeholder="Minimum price">
+
+                <input id="maxPrice" type="number" min="0"
+                    class="border rounded p-2" placeholder="Maximum price">
+            </div>
+
+            <div class="flex flex-wrap gap-3 mt-4">
+                <button id="filterButton"
+                    class="bg-blue-700 text-white px-4 py-2 rounded">
+                    Search / Filter
+                </button>
+
+                <button id="resetButton"
+                    class="bg-gray-600 text-white px-4 py-2 rounded">
+                    Reset
+                </button>
+
+                <button id="sortDateButton"
+                    class="bg-purple-700 text-white px-4 py-2 rounded">
+                    Sort Newest First
+                </button>
+            </div>
+
+            <p id="analysisMessage" class="mt-3 text-sm text-gray-600"></p>
+        </section>
+
+        <!-- ORDERS SECTION: Challenges 0, 1, 2, 3 and 8 -->
+        <section class="bg-white p-5 rounded-lg shadow">
+            <h2 class="text-2xl font-bold mb-4">Orders</h2>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead class="bg-gray-200">
+                        <tr>
+                            <th class="p-3 border">Order ID</th>
+                            <th class="p-3 border">Customer</th>
+                            <th class="p-3 border">Email</th>
+                            <th class="p-3 border">Product</th>
+                            <th class="p-3 border">Category</th>
+                            <th class="p-3 border">Price</th>
+                            <th class="p-3 border">Date</th>
+                            <th class="p-3 border">Validation</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ordersTable"></tbody>
+                </table>
+            </div>
+
+            <p id="orderCount" class="mt-4 font-semibold"></p>
+        </section>
+
+        <!-- UNIQUE CATEGORIES SECTION: Challenge 5 -->
+        <section class="bg-white p-5 rounded-lg shadow">
+            <h2 class="text-2xl font-bold mb-4">Unique Categories</h2>
+            <div id="categoriesList" class="flex flex-wrap gap-2"></div>
+        </section>
+
+        <!-- PRODUCT LOOKUP SECTION: Challenge 6 -->
+        <section class="bg-white p-5 rounded-lg shadow">
+            <h2 class="text-2xl font-bold mb-4">Product Lookup</h2>
+
+            <div class="flex flex-col sm:flex-row gap-3">
+                <input id="productInput" class="border rounded p-2 flex-1"
+                    placeholder="Enter a product name">
+
+                <button id="lookupButton"
+                    class="bg-blue-700 text-white px-4 py-2 rounded">
+                    Find Product
+                </button>
+            </div>
+
+            <p id="productResult" class="mt-4"></p>
+        </section>
+
+        <!-- DATA PROCESSING SECTION: Challenges 7 and 8 -->
+        <section class="bg-white p-5 rounded-lg shadow">
+            <h2 class="text-2xl font-bold mb-4">Data Processing</h2>
+
+            <h3 class="font-semibold mb-2">Export Orders as JSON</h3>
+            <button id="exportButton"
+                class="bg-green-700 text-white px-4 py-2 rounded mb-3">
+                Export / Show JSON
+            </button>
+
+            <button id="downloadButton"
+                class="bg-green-800 text-white px-4 py-2 rounded mb-3">
+                Download JSON
+            </button>
+
+            <textarea id="jsonOutput" rows="8"
+                class="border rounded p-3 w-full font-mono text-sm"
+                placeholder="Exported JSON will appear here"></textarea>
+
+            <h3 class="font-semibold mt-5 mb-2">Import Orders from JSON</h3>
+            <p class="text-sm text-gray-600 mb-2">
+                Paste a JSON array of orders below. Imported orders are added to the current data.
+            </p>
+
+            <textarea id="jsonInput" rows="6"
+                class="border rounded p-3 w-full font-mono text-sm"
+                placeholder='Paste JSON orders here'></textarea>
+
+            <button id="importButton"
+                class="bg-indigo-700 text-white px-4 py-2 rounded mt-3">
+                Import Orders
+            </button>
+
+            <p id="jsonMessage" class="mt-3"></p>
+
+            <hr class="my-6">
+
+            <h3 class="font-semibold mb-2">Test Data Validation</h3>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <select id="validationType" class="border rounded p-2">
+                    <option value="email">Email address</option>
+                    <option value="orderId">Order ID</option>
+                </select>
+
+                <input id="validationInput" class="border rounded p-2"
+                    placeholder="Enter a value to test">
+
+                <button id="validateButton"
+                    class="bg-orange-600 text-white px-4 py-2 rounded">
+                    Validate
+                </button>
+            </div>
+
+            <p id="validationResult" class="mt-3"></p>
+        </section>
+    </main>
+
+    <!-- Connects the JavaScript file to the webpage -->
+    <script src="script.js"></script>
+</body>
+</html>

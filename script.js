@@ -640,3 +640,100 @@ function renderStatistics() {
         statisticsContainer.appendChild(card);
     });
 }
+
+// CHALLENGE 10: INTERFACE
+
+// Render the orders in the table.
+function renderOrders() {
+    const table = document.getElementById("ordersTable");
+    table.innerHTML = "";
+
+    displayedOrders.forEach(order => {
+        const row = document.createElement("tr");
+        row.className = "hover:bg-gray-50";
+
+        const emailValid = isValidEmail(order.email);
+        const orderIdValid = isValidOrderId(order.orderId);
+
+        // Build table cells safely using textContent.
+        const values = [
+            order.orderId,
+            cleanName(order.customerName),
+            cleanEmail(order.email),
+            order.product,
+            order.category,
+            formatMoney(Number(order.price)),
+            formatDate(order.orderDate)
+        ];
+
+        values.forEach((value, index) => {
+            const cell = document.createElement("td");
+            cell.className = "p-3 border";
+
+            if (index === 5) {
+                cell.textContent = value;
+            } else {
+                cell.textContent = value;
+            }
+
+            row.appendChild(cell);
+        });
+
+        // Show email and order ID validation results.
+        const validationCell = document.createElement("td");
+        validationCell.className = "p-3 border text-sm";
+
+        validationCell.textContent =
+            (emailValid ? "Email OK" : "Email Invalid") +
+            " | " +
+            (orderIdValid ? "ID OK" : "ID Invalid");
+
+        validationCell.className +=
+            emailValid && orderIdValid
+                ? " text-green-700"
+                : " text-red-700";
+
+        row.appendChild(validationCell);
+
+        // Highlight orders placed in the last 30 days.
+        if (isRecent(order.orderDate)) {
+            row.classList.add("bg-green-50");
+        }
+
+        table.appendChild(row);
+    });
+
+    document.getElementById("orderCount").textContent =
+        "Showing " + displayedOrders.length +
+        " of " + orders.length + " orders.";
+
+    // Keep the statistics updated when the dataset changes.
+    renderStatistics();
+}
+
+// Update every section that depends on the order data.
+function renderAll() {
+    renderOrders();
+    renderCategories();
+    renderStatistics();
+}
+
+// Connect buttons and inputs to their functions.
+document.getElementById("filterButton").addEventListener("click", filterOrders);
+document.getElementById("resetButton").addEventListener("click", resetFilters);
+document.getElementById("sortDateButton").addEventListener("click", sortNewestFirst);
+document.getElementById("lookupButton").addEventListener("click", lookupProduct);
+document.getElementById("exportButton").addEventListener("click", exportOrders);
+document.getElementById("downloadButton").addEventListener("click", downloadOrders);
+document.getElementById("importButton").addEventListener("click", importOrders);
+document.getElementById("validateButton").addEventListener("click", validateInput);
+
+// Pressing Enter in the product field also performs a lookup.
+document.getElementById("productInput").addEventListener("keydown", event => {
+    if (event.key === "Enter") {
+        lookupProduct();
+    }
+});
+
+// Show the complete application when the page first loads.
+renderAll();
