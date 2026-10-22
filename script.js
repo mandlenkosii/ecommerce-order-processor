@@ -420,3 +420,108 @@ function lookupProduct() {
 
     console.log("Number of products in the Map:", productMap.size);
 }
+
+// CHALLENGE 7: EXPORT AND IMPORT ORDERS
+// Built-in concept: JSON
+
+// Convert the order array into a JSON string.
+function exportOrders() {
+    const jsonText = JSON.stringify(orders, null, 2);
+
+    document.getElementById("jsonOutput").value = jsonText;
+    document.getElementById("jsonMessage").textContent =
+        "Orders converted to JSON successfully.";
+    document.getElementById("jsonMessage").className =
+        "mt-3 text-green-700";
+}
+
+// Download the orders as a JSON file.
+function downloadOrders() {
+    const jsonText = JSON.stringify(orders, null, 2);
+    const file = new Blob([jsonText], { type: "application/json" });
+    const downloadURL = URL.createObjectURL(file);
+
+    const link = document.createElement("a");
+    link.href = downloadURL;
+    link.download = "orders.json";
+    link.click();
+
+    URL.revokeObjectURL(downloadURL);
+}
+
+// Import new orders from JSON text.
+function importOrders() {
+    const jsonText = document.getElementById("jsonInput").value.trim();
+    const message = document.getElementById("jsonMessage");
+
+    if (jsonText === "") {
+        message.textContent = "Please paste JSON data before importing.";
+        message.className = "mt-3 text-red-700";
+        return;
+    }
+
+    try {
+        // JSON.parse() converts JSON text back into JavaScript data.
+        const importedOrders = JSON.parse(jsonText);
+
+        if (!Array.isArray(importedOrders)) {
+            throw new Error("The JSON must contain an array of orders.");
+        }
+
+        // Check that every imported order has the required fields.
+        const requiredFields = [
+            "orderId", "customerName", "email",
+            "product", "category", "price", "orderDate"
+        ];
+
+        const validOrders = importedOrders.every(order =>
+            order &&
+            typeof order === "object" &&
+            !Array.isArray(order) &&
+            requiredFields.every(field =>
+                Object.prototype.hasOwnProperty.call(order, field)
+            ) &&
+            typeof order.orderId === "string" &&
+            typeof order.customerName === "string" &&
+            typeof order.email === "string" &&
+            typeof order.product === "string" &&
+            typeof order.category === "string" &&
+            Number.isFinite(Number(order.price)) &&
+            Number(order.price) >= 0 &&
+            typeof order.orderDate === "string" &&
+            !Number.isNaN(new Date(order.orderDate).getTime())
+        );
+
+        if (!validOrders) {
+            throw new Error("One or more orders have missing or invalid fields.");
+        }
+
+        // Prevent duplicate order IDs.
+        const existingIds = new Set(orders.map(order => order.orderId));
+        const importedIds = new Set();
+
+        for (const order of importedOrders) {
+            if (existingIds.has(order.orderId) ||
+                importedIds.has(order.orderId)) {
+                throw new Error("Duplicate order ID found: " + order.orderId);
+            }
+
+            importedIds.add(order.orderId);
+        }
+
+        // Add the imported orders to the existing dataset.
+        orders = [...orders, ...importedOrders];
+        displayedOrders = [...orders];
+
+        renderAll();
+
+        message.textContent =
+            importedOrders.length + " order(s) imported successfully.";
+        message.className = "mt-3 text-green-700";
+
+    } catch (error) {
+        // Show a helpful message instead of crashing the application.
+        message.textContent = "Import failed: " + error.message;
+        message.className = "mt-3 text-red-700";
+    }
+}
