@@ -573,3 +573,70 @@ function validateInput() {
         ? "mt-3 text-green-700 font-semibold"
         : "mt-3 text-red-700 font-semibold";
 }
+
+// CHALLENGE 9: STATISTICS DASHBOARD
+// Built-in concepts: String, Number, Math, Date,
+// Array, Set, Map and RegExp
+
+// Calculate statistics from the current order dataset.
+function renderStatistics() {
+    const totalOrders = orders.length;
+    const totalValue = calculateTotal();
+    const averageValue = calculateAverage();
+    const highestPrice = getHighestPrice();
+    const lowestPrice = getLowestPrice();
+
+    const uniqueCategories = getUniqueCategories();
+
+    const validEmails = orders.filter(order =>
+        isValidEmail(order.email)
+    ).length;
+
+    const invalidEmails = totalOrders - validEmails;
+
+    const recentOrders = orders.filter(order =>
+        isRecent(order.orderDate)
+    ).length;
+
+    // Find the order with the highest price.
+    const highestOrder = orders.reduce((highest, order) => {
+        return Number(order.price) > Number(highest.price) ? order : highest;
+    }, orders[0]);
+
+    const statistics = [
+        ["Total Orders", totalOrders],
+        ["Total Order Value", formatMoney(totalValue)],
+        ["Average Order Value", formatMoney(averageValue)],
+        ["Highest Order", orders.length ? formatMoney(highestPrice) : "R0.00"],
+        ["Lowest Order", orders.length ? formatMoney(lowestPrice) : "R0.00"],
+        ["Unique Categories", uniqueCategories.size],
+        ["Valid Emails", validEmails],
+        ["Invalid Emails", invalidEmails],
+        ["Recent Orders (30 days)", recentOrders],
+        [
+            "Most Expensive Product",
+            highestOrder ? highestOrder.product : "No orders"
+        ]
+    ];
+
+    const statisticsContainer = document.getElementById("statistics");
+    statisticsContainer.innerHTML = "";
+
+    statistics.forEach(statistic => {
+        const card = document.createElement("div");
+
+        card.className = "bg-blue-50 border border-blue-100 p-4 rounded-lg";
+
+        const heading = document.createElement("p");
+        heading.className = "text-sm text-gray-600";
+        heading.textContent = statistic[0];
+
+        const value = document.createElement("p");
+        value.className = "text-xl font-bold mt-2";
+        value.textContent = statistic[1];
+
+        card.appendChild(heading);
+        card.appendChild(value);
+        statisticsContainer.appendChild(card);
+    });
+}
