@@ -435,7 +435,7 @@ function exportOrders() {
         "mt-3 text-green-700";
 }
 
-// Download the orders as a JSON file.
+// Downloading the orders as a JSON file.
 function downloadOrders() {
     const jsonText = JSON.stringify(orders, null, 2);
     const file = new Blob([jsonText], { type: "application/json" });
@@ -496,7 +496,7 @@ function importOrders() {
             throw new Error("One or more orders have missing or invalid fields.");
         }
 
-        // Prevent duplicate order IDs.
+        // Preventing duplicate order IDs.
         const existingIds = new Set(orders.map(order => order.orderId));
         const importedIds = new Set();
 
@@ -524,4 +524,52 @@ function importOrders() {
         message.textContent = "Import failed: " + error.message;
         message.className = "mt-3 text-red-700";
     }
+}
+
+// CHALLENGE 8: VALIDATE WITH PATTERNS
+// Built-in concept: RegExp
+
+// Regular expression for a basic email format.
+const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+// Order IDs must look like ORD-0001.
+const orderIdPattern = /^ORD-\d{4}$/;
+
+// Check whether an email has the expected format.
+function isValidEmail(email) {
+    return emailPattern.test(cleanEmail(email));
+}
+
+// Check whether an order ID has the expected format.
+function isValidOrderId(orderId) {
+    return orderIdPattern.test(orderId.trim());
+}
+
+// Let the user test an email address or order ID.
+function validateInput() {
+    const type = document.getElementById("validationType").value;
+    const value = document.getElementById("validationInput").value.trim();
+    const result = document.getElementById("validationResult");
+
+    if (value === "") {
+        result.textContent = "Please enter a value to validate.";
+        result.className = "mt-3 text-orange-700";
+        return;
+    }
+
+    let valid;
+
+    if (type === "email") {
+        valid = isValidEmail(value);
+    } else {
+        valid = isValidOrderId(value);
+    }
+
+    result.textContent = valid
+        ? "Valid format."
+        : "Invalid format. Please check your entry.";
+
+    result.className = valid
+        ? "mt-3 text-green-700 font-semibold"
+        : "mt-3 text-red-700 font-semibold";
 }
